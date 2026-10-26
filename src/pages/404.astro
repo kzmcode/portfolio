@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../content/site';
+
+// 静的に生成し、存在しない URL ではこのページを 404 で返す（Hero と同じパーティクルの地）
+export const prerender = true;
+---
+<Base title={`404 — ${site.name}`} description="ページが見つかりませんでした / Page not found" noindex>
+  <header class="nf-head">
+    <a class="nf-logo" href="/" aria-label="トップへ">{site.logo}</a>
+  </header>
+  <main class="nf" id="nf">
+    <canvas class="nf-canvas" aria-hidden="true"></canvas>
+    <div class="nf-text">
+      <h1 class="nf-code display">404</h1>
+      <p class="nf-title display" lang="en">PAGE NOT FOUND</p>
+      <p class="nf-msg">お探しのページは見つかりませんでした。<br />URL が変わったか、削除された可能性があります。</p>
+      <a class="nf-cta" href="/">BACK TO HOME</a>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .nf-head { position: absolute; z-index: 2; top: 0; left: 0; padding: 16px var(--gutter); }
+  .nf-logo { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-display); font-weight: 500; font-size: 24px; letter-spacing: .08em; text-decoration: none; }
+  .nf {
+    position: relative; overflow: hidden; min-height: 100vh; min-height: 100svh;
+    background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: crosshair; touch-action: pan-y;
+  }
+  .nf-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .nf-text { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 0 24px; text-align: center; pointer-events: none; }
+  .nf-code { font-weight: 300; font-size: clamp(72px, 16vw, 144px); letter-spacing: var(--track-hero); line-height: 1; margin-right: calc(-1 * var(--track-hero)); }
+  .nf-title { font-weight: 500; font-size: 14px; letter-spacing: var(--track-wide); margin-right: calc(-1 * var(--track-wide)); }
+  .nf-msg { font-size: 14px; line-height: 2; color: var(--text-2); }
+  /* Hero の VIEW WORK と同じ：白抜き → hover で濃色ベタ */
+  .nf-cta {
+    pointer-events: auto; margin-top: 16px; display: inline-flex; align-items: center; min-height: 48px; padding: 0 28px;
+    border: 1.5px solid var(--text); background: rgba(245, 247, 252, .6); text-decoration: none; color: var(--text);
+    font-family: var(--font-display); font-weight: 500; font-size: 14px; letter-spacing: var(--track-wide);
+    transition: background-color .2s, color .2s;
+  }
+  .nf-cta:hover { background: var(--text); color: var(--bg); }
+</style>
+
+<script>
+  import { HeroParticles } from '../scripts/particles';
+  const host = document.getElementById('nf');
+  const canvas = host?.querySelector<HTMLCanvasElement>('canvas');
+  if (host && canvas) new HeroParticles(canvas, host, { count: matchMedia('(max-width: 760px)').matches ? 360 : 720 });
+</script>

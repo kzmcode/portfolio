@@ -1,0 +1,11 @@
+title: KMC Extracurricular Portal
+category: PROFESSIONAL
+device: pc
+platform: Web
+tools: React / TypeScript / Firebase / GAS / Gemini API / Slack API
+year: "2026"
+month: 9
+published: true
+addedAt: 2026-10-26T10:15:53.620Z
+descriptionEn: A web app that handles extracurricular applications at Kamiyama Marugoto College of Design, Engineering and Entrepreneurship from a student's application to staff and guardian approval. Each application's progress is always visible. Google Apps Script workers send guardian emails and Slack notifications and run a first-pass AI review with Gemini.
+description: 神山まるごと高専の課外活動について、学生の申請からスタッフ・保護者の承認までを扱うWebアプリです。各申請がどこまで進んだかが常に見えます。保護者へのメール、Slack通知、Gemini による一次審査は Google Apps Script のワーカーが担当します。

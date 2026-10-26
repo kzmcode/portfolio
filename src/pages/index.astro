@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Works from '../components/Works.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import WorkModal from '../components/WorkModal.astro';
+import { listWorks, toView } from '../lib/works';
+import { homeJsonLd } from '../lib/structured-data';
+
+// ビルド時に src/content/works/ の作品を読んで静的 HTML にする
+export const prerender = true;
+
+const works = (await listWorks()).map(toView);
+const jsonLd = JSON.stringify(homeJsonLd(works, Astro.site ?? Astro.url)).replace(/</g, '\\u003c');
+---
+<Base>
+  <script slot="head" type="application/ld+json" set:html={jsonLd} />
+  <a class="skip-link" href="#about">本文へスキップ</a>
+  <Sidebar />
+  <main class="main">
+    <Hero />
+    <About />
+    <Works works={works} />
+    <Contact />
+    <Footer />
+  </main>
+  <WorkModal works={works} />
+</Base>

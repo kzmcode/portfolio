@@ -1,0 +1,63 @@
+---
+import Admin from '../AdminLayout.astro';
+import WorkForm from '../WorkForm.astro';
+import { getEntry } from 'astro:content';
+import { workMedia } from '../../lib/media';
+export const prerender = false;
+const work = await getEntry('works', Astro.params.slug ?? '');
+if (!work) return new Response('Not found', { status: 404 });
+const created = Astro.url.searchParams.has('created');
+const media = workMedia(work.id);
+---
+<Admin title={`EDIT — ${work.data.title}`}>
+  {created && <p class="a-flash">作成しました。続けて動画・ポスターを登録できます。</p>}
+  <WorkForm work={work} />
+  <section class="a-media" id="media" data-slug={work.id}>
+    <div class="a-card">
+      <h2>PREVIEW VIDEO</h2>
+      <p class="a-hint"><code>src/content/works/{work.id}/preview.mp4</code>（H.264・音声なし、PC 1440×900 / スマホ 390×844、10〜20 秒ループ、25MB まで）</p>
+      {media.video ? <video src={media.video} muted loop playsinline controls preload="metadata" /> : <p class="a-hint">未設定（モーダルは NO PREVIEW）</p>}
+      <div class="a-row">
+        <label class="a-btn">ファイルを選択<input type="file" accept="video/mp4" data-upload="video" class="visually-hidden" /></label>
+        {media.video && <button type="button" class="a-btn danger" data-remove="video">外す</button>}
+      </div>
+    </div>
+    <div class="a-card">
+      <h2>POSTER</h2>
+      <p class="a-hint"><code>src/content/works/{work.id}/poster.webp</code>（jpg / png 可。カード背景と動画の poster）</p>
+      {media.poster ? <img src={media.poster} alt="" /> : <p class="a-hint">未設定</p>}
+      <div class="a-row">
+        <label class="a-btn">ファイルを選択<input type="file" accept="image/webp,image/jpeg,image/png" data-upload="poster" class="visually-hidden" /></label>
+        {media.poster && <button type="button" class="a-btn danger" data-remove="poster">外す</button>}
+      </div>
+    </div>
+    <p class="a-hint">選んだファイルは上記の場所に保存されます。本番に出すには <code>pnpm run deploy</code>。</p>
+  </section>
+</Admin>
+
+<script>
+  import { api, flash } from '../client';
+  // /__dev/media（integrations/local-admin.mjs）へ送って src/content/works/<slug>/ に保存
+  const root = document.getElementById('media')!;
+  const slug = root.dataset.slug!;
+  const media = (kind: string, init: { method: string; raw?: Blob; type?: string }) => api(`/__dev/media?slug=${slug}&kind=${kind}`, init);
+  root.querySelectorAll<HTMLInputElement>('[data-upload]').forEach((input) => {
+    input.addEventListener('change', async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      flash(`${file.name} を保存中…（${(file.size / 1048576).toFixed(1)}MB）`);
+      try {
+        await media(input.dataset.upload!, { method: 'PUT', raw: file, type: file.type });
+        location.reload();
+      } catch (err) { flash((err as Error).message, true); }
+      input.value = '';
+    });
+  });
+  root.querySelectorAll<HTMLButtonElement>('[data-remove]').forEach((b) => {
+    b.addEventListener('click', async () => {
+      if (!confirm('このファイルを src/content/works/ から削除します。よろしいですか？')) return;
+      try { await media(b.dataset.remove!, { method: 'DELETE' }); location.reload(); }
+      catch (err) { flash((err as Error).message, true); }
+    });
+  });
+</script>

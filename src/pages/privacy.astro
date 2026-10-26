@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../content/site';
+
+export const prerender = true;
+const updated = '2026年10月25日';
+---
+<Base title={`Privacy Policy — ${site.name}`} description="プライバシーポリシー / Privacy Policy">
+  <header class="p-head">
+    <a class="p-logo" href="/" aria-label="トップへ">{site.logo}</a>
+    <a class="p-back" href="/#contact">← BACK</a>
+  </header>
+  <main class="p-main">
+    <h1 class="section-title">PRIVACY POLICY</h1>
+    <p class="p-sub">プライバシーポリシー</p>
+    <p class="p-lead">
+      <span lang="en">This policy explains how {site.name} ("we") handles personal information received through this website.</span><br />
+      本ポリシーは、{site.name}（以下「運営者」）が本サイトを通じて取得する個人情報の取り扱いについて定めるものです。
+    </p>
+
+    <section>
+      <h2><span class="h-en">01 / Information we collect</span>取得する情報</h2>
+      <p>お問い合わせフォームの送信時に、以下の情報を取得します。</p>
+      <ul>
+        <li>お名前（ニックネーム可）、メールアドレス、メッセージ</li>
+        <li>送信元 IP アドレスをハッシュ化した値（元の IP アドレスは保存しません）、ブラウザの種類（User-Agent）</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="h-en">02 / Purpose of use</span>利用目的</h2>
+      <ul>
+        <li>お問い合わせへの回答・ご連絡のため</li>
+        <li>迷惑行為・不正送信の防止のため</li>
+      </ul>
+      <p>上記以外の目的で利用することはありません。</p>
+    </section>
+
+    <section>
+      <h2><span class="h-en">03 / Third parties</span>第三者提供</h2>
+      <p>法令に基づく場合を除き、ご本人の同意なく個人情報を第三者に提供することはありません。</p>
+    </section>
+
+    <section>
+      <h2><span class="h-en">04 / External services</span>外部サービスの利用</h2>
+      <p>本サイトは Cloudflare, Inc. のサービス（ホスティング、データベース、メール送信）を利用しています。また、スパム対策として Cloudflare Turnstile を使用しており、フォームの表示・送信時に端末やブラウザに関する情報が同社に送信されます。詳しくは <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener" target="_blank">Cloudflare のプライバシーポリシー</a>をご確認ください。</p>
+      <p>本サイトでは、アクセス解析や広告を目的とした Cookie は使用していません。</p>
+    </section>
+
+    <section>
+      <h2><span class="h-en">05 / Retention</span>情報の管理</h2>
+      <p>お問い合わせ内容は適切に管理し、必要がなくなった時点で削除します。</p>
+    </section>
+
+    <section>
+      <h2><span class="h-en">06 / Your rights</span>開示・訂正・削除</h2>
+      <p>ご本人から個人情報の開示・訂正・削除のご請求があった場合は、本人確認のうえ速やかに対応します。下記の窓口までご連絡ください。</p>
+    </section>
+
+    <section>
+      <h2><span class="h-en">07 / Contact</span>お問い合わせ窓口</h2>
+      <p>{site.name}<br />Email: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+    </section>
+
+    <section>
+      <h2><span class="h-en">08 / Changes</span>改定</h2>
+      <p>本ポリシーの内容は、必要に応じて予告なく変更することがあります。変更後のポリシーは本ページに掲載した時点から効力を生じます。</p>
+      <p class="p-date">制定日：{updated}</p>
+    </section>
+  </main>
+  <footer class="p-foot">© {site.year} {site.name}</footer>
+</Base>
+
+<style>
+  .p-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px var(--gutter); border-bottom: 1px solid var(--line); }
+  .p-logo { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-display); font-weight: 500; font-size: 24px; letter-spacing: .08em; text-decoration: none; }
+  .p-back { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-display); font-size: 12px; letter-spacing: .2em; color: var(--text-2); text-decoration: none; }
+  .p-back:hover { color: var(--accent-2); }
+  .p-main { max-width: 760px; margin: 0 auto; padding: 80px var(--gutter) 112px; display: flex; flex-direction: column; gap: 40px; }
+  .p-main > .section-title { margin-bottom: -32px; }
+  .p-sub { font-size: 13px; color: var(--text-2); }
+  .p-lead { font-size: 15px; line-height: 2; }
+  .p-lead [lang='en'] { font-family: var(--font-display); }
+  section { display: flex; flex-direction: column; gap: 12px; }
+  h2 { display: flex; flex-direction: column; gap: 4px; font-size: 17px; font-weight: 700; }
+  .h-en { font-family: var(--font-display); font-size: 12px; font-weight: 400; letter-spacing: .2em; color: var(--text-2); text-transform: uppercase; }
+  section p, section li { font-size: 15px; line-height: 2; }
+  ul { margin: 0; padding-left: 1.2em; }
+  .p-date { color: var(--text-2); font-size: 13px; }
+  .p-foot { padding: 32px var(--gutter); border-top: 1px solid var(--line); font-family: var(--font-display); font-size: 12px; letter-spacing: .16em; color: var(--text-2); }
+</style>

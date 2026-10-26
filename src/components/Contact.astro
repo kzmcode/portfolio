@@ -1,0 +1,84 @@
+---
+import { site } from '../content/site';
+import { env } from '../lib/env';
+import ArrowIcon from './ArrowIcon.astro';
+const c = site.contact;
+// 本番キーは kzmcode.dev でしか動かないため、dev では Turnstile のテスト用キー（常に成功）を使う
+const turnstileSiteKey = import.meta.env.DEV ? '1x00000000000000000000BB' : env.TURNSTILE_SITE_KEY;
+---
+<section id="contact" class="contact below-slant" aria-labelledby="contact-title">
+  <div class="contact-info">
+    <h2 id="contact-title" class="section-title">CONTACT</h2>
+    <p class="lead display" lang="en">{c.lead}</p>
+    <p class="note">{c.note}</p>
+  </div>
+  <div class="form-box" id="contact-box">
+    <form class="form" id="contact-form" method="post" action="/api/contact" novalidate>
+      <noscript><p class="form-error">送信には JavaScript が必要です。</p></noscript>
+      <p class="form-error" role="alert" id="contact-error" hidden></p>
+      <div class="row-2">
+        <div class="field-group">
+          <label for="c-name"><span class="l-en">NAME</span><span class="l-ja">お名前</span><span class="req">nickname OK / ニックネームでも OK</span></label>
+          <input id="c-name" name="name" class="field" type="text" required maxlength="100" autocomplete="nickname" placeholder="kzm" />
+        </div>
+        <div class="field-group">
+          <label for="c-email"><span class="l-en">EMAIL</span><span class="l-ja">返信先</span></label>
+          <input id="c-email" name="email" class="field" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label for="c-msg"><span class="l-en">MESSAGE</span><span class="l-ja">メッセージ</span></label>
+        <textarea id="c-msg" name="message" class="field" required maxlength="4000" rows="5" placeholder="Hi! / こんにちは！ 感想・質問・相談など、なんでもどうぞ。"></textarea>
+      </div>
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-size="flexible" data-appearance="interaction-only"></div>
+      <div class="form-foot">
+        <p class="agree"><span lang="en">By submitting, you agree to our <a href={site.privacyHref}>Privacy Policy</a>.</span><br />送信により<a href={site.privacyHref}>プライバシーポリシー</a>に同意したものとみなします。</p>
+        <button type="submit" class="btn-primary send" id="contact-submit"><span data-label>SEND</span> <ArrowIcon size={16} stroke={1.8} /></button>
+      </div>
+    </form>
+    <div class="thanks" id="contact-thanks" role="status" tabindex="-1" hidden>
+      <span class="check" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+      <p class="thanks-title display">THANK YOU</p>
+      <p class="thanks-text">メッセージありがとうございます！<br />確認してお返事しますね。</p>
+      <a class="btn-line" href="#contact" id="contact-back">BACK TO FORM</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { position: relative; overflow: hidden; background: var(--surface); border-top: 1px solid var(--line); padding-top: var(--section-y); padding-bottom: var(--section-y); display: flex; flex-wrap: wrap; gap: 64px; }
+  .contact-info { position: relative; flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 32px; }
+  .lead { font-size: 24px; line-height: 1.7; font-weight: 500; }
+  .note { font-size: 15px; line-height: 2; color: var(--text-2); }
+  .form-box { position: relative; flex: 1.3 1 420px; min-width: 0; }
+  .form { display: flex; flex-direction: column; gap: 24px; }
+  .row-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; align-items: end; }
+  .field-group { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  /* ラベルは英語・日本語を並べて表記 */
+  .field-group > label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; font-weight: 500; }
+  .l-en { font-family: var(--font-display); font-size: 12px; letter-spacing: .2em; }
+  .req { font-size: 12px; color: var(--text-2); font-weight: 400; }
+  .field { width: 100%; height: 52px; padding: 0 16px; border: 1px solid var(--line); background: var(--field); font-size: 15px; color: var(--text); border-radius: 0; }
+  textarea.field { height: auto; padding: 14px 16px; line-height: 1.8; resize: vertical; }
+  .field::placeholder { color: var(--placeholder); }
+  .field:focus { outline: 2px solid var(--accent-2); outline-offset: -1px; border-color: var(--accent-2); }
+  .field[aria-invalid='true'] { border-color: var(--text); }
+  .form-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+  /* SEND：通常は白抜き、hover / focus で濃色ベタ（btn-primary の見た目）に */
+  .send { background: var(--field); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--text); transition: background-color .2s, color .2s; }
+  .send:hover, .send:focus-visible { background: var(--text); color: var(--bg); }
+  .agree { font-size: 12px; line-height: 1.8; color: var(--text-2); }
+  .agree a { color: var(--text-2); }
+  .form-error { padding: 12px 16px; border: 1px solid var(--text); background: var(--field); font-size: 14px; line-height: 1.8; }
+  .thanks { min-height: 520px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; }
+  .thanks:focus { outline: none; }
+  .check { width: 72px; height: 72px; border-radius: 50%; border: 2px dotted var(--accent); display: flex; align-items: center; justify-content: center; }
+  .thanks-title { font-size: 18px; font-weight: 500; letter-spacing: var(--track-wide); }
+  .thanks-text { font-size: 15px; line-height: 1.9; color: var(--text-2); }
+  @media (max-width: 600px) { .lead { font-size: 20px; } .form-box { flex-basis: 100%; } }
+</style>
+
+<script>
+  import { initContact } from '../scripts/contact';
+  initContact();
+</script>

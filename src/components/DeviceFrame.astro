@@ -1,0 +1,25 @@
+---
+// モーダル右カラムの PC 枠 / スマホ枠。video は modal.ts が差し込み、動画が無い作品は枠を出さず NO PREVIEW だけ表示
+---
+<div class="frame-pc" data-frame="pc" hidden>
+  <div class="pc-bar">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+  </div>
+  <div class="pc-screen" data-slot="screen"></div>
+</div>
+<div class="frame-sp" data-frame="sp" hidden>
+  <div class="sp-screen" data-slot="screen"></div>
+</div>
+<p class="no-preview display" data-no-preview hidden>NO PREVIEW</p>
+
+<style>
+  .frame-pc { width: 100%; max-width: 760px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); box-shadow: var(--shadow-device); }
+  .pc-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .pc-screen { aspect-ratio: 16 / 10; background: var(--text); display: flex; align-items: center; justify-content: center; }
+  .frame-sp { position: relative; flex: none; width: 270px; aspect-ratio: 9 / 19.5; border: 10px solid var(--text); border-radius: 44px; background: var(--text); overflow: hidden; box-shadow: 0 24px 48px rgba(23, 28, 40, .2); }
+  .sp-screen { position: absolute; inset: 0; border-radius: 34px; overflow: hidden; background: var(--device-screen); display: flex; align-items: center; justify-content: center; }
+  [data-slot='screen'] :global(video) { width: 100%; height: 100%; object-fit: cover; }
+  .no-preview { font-size: 14px; letter-spacing: var(--track-wide); color: var(--text-2); text-align: center; }
+  @media (max-width: 900px) { .frame-sp { width: clamp(220px, 60vw, 270px); } }
+</style>

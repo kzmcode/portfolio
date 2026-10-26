@@ -1,0 +1,95 @@
+---
+import type { WorkEntry } from '../lib/works';
+import { WORK_CATEGORIES, WORK_DEVICES } from '../content/work-schema.mjs';
+interface Props { work?: WorkEntry | null }
+const { work } = Astro.props;
+const d = work?.data;
+const v = (k: 'title' | 'year' | 'tools' | 'platform' | 'descriptionEn' | 'description' | 'url' | 'repoUrl') => d?.[k] ?? '';
+---
+<form class="a-form" id="work-form" data-slug={work?.id ?? ''}>
+  <div class="a-field">
+    <label for="f-slug">slug<span class="a-hint">フォルダ名（src/content/works/&lt;slug&gt;/）。英小文字・数字・ハイフン</span></label>
+    <input id="f-slug" type="text" name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" value={work?.id ?? ''} />
+  </div>
+  <div class="a-field">
+    <label for="f-title">タイトル</label>
+    <input id="f-title" type="text" name="title" required maxlength="120" value={v('title')} />
+  </div>
+  <div class="a-field">
+    <label for="f-year">年・月<span class="a-hint">西暦4桁。月は任意（表示は 2026.01）。新しいほど前に表示</span></label>
+    <div class="a-ym">
+      <input id="f-year" type="text" name="year" required inputmode="numeric" pattern="\d{4}" maxlength="4" value={v('year')} />
+      <select name="month" aria-label="月">
+        <option value="">月なし</option>
+        {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => <option value={m} selected={d?.month === m}>{String(m).padStart(2, '0')}</option>)}
+      </select>
+    </div>
+  </div>
+  <div class="a-field">
+    <label for="f-tools">使用技術（TOOLS）</label>
+    <input id="f-tools" type="text" name="tools" maxlength="200" value={v('tools')} />
+  </div>
+  <div class="a-field full">
+    <label for="f-platform">PLATFORM<span class="a-hint">自由記述（例：PWA / iOS・Android / Web）。空なら表示デバイスから「Desktop」「Mobile (iOS / Android)」</span></label>
+    <input id="f-platform" type="text" name="platform" maxlength="100" value={v('platform')} />
+  </div>
+  <fieldset class="a-radios">
+    <legend>カテゴリ</legend>
+    <div class="a-options">
+      {WORK_CATEGORIES.map((c) => <label><input type="radio" name="category" value={c} checked={(d?.category ?? 'INDIE') === c} />{c}</label>)}
+    </div>
+  </fieldset>
+  <fieldset class="a-radios">
+    <legend>表示デバイス</legend>
+    <div class="a-options">
+      {WORK_DEVICES.map((dev) => <label><input type="radio" name="device" value={dev} checked={(d?.device ?? 'pc') === dev} />{dev === 'pc' ? 'PC（ブラウザ枠）' : 'スマホ（端末枠）'}</label>)}
+    </div>
+  </fieldset>
+  <div class="a-field full">
+    <label for="f-desc-en">説明（英語）<span class="a-hint">モーダルで先に表示</span></label>
+    <textarea id="f-desc-en" name="descriptionEn" maxlength="4000">{v('descriptionEn')}</textarea>
+  </div>
+  <div class="a-field full">
+    <label for="f-desc">説明（日本語）<span class="a-hint">英語の下に表示</span></label>
+    <textarea id="f-desc" name="description" maxlength="4000">{v('description')}</textarea>
+  </div>
+  <div class="a-field">
+    <label for="f-url">公開 URL<span class="a-hint">あるときだけ VISIT を表示</span></label>
+    <input id="f-url" type="url" name="url" maxlength="500" value={v('url')} placeholder="https://" />
+  </div>
+  <div class="a-field">
+    <label for="f-repo">GitHub リポジトリ<span class="a-hint">あるときだけ GITHUB を表示</span></label>
+    <input id="f-repo" type="url" name="repoUrl" maxlength="500" value={v('repoUrl')} placeholder="https://github.com/…" />
+  </div>
+  <fieldset class="a-radios full">
+    <legend>公開</legend>
+    <div class="a-options">
+      <label><input type="radio" name="published" value="true" checked={d?.published === true} />公開</label>
+      <label><input type="radio" name="published" value="false" checked={d?.published !== true} />非公開</label>
+    </div>
+  </fieldset>
+  <div class="a-row full">
+    <button type="submit" class="a-btn primary">{work ? '保存' : '作成'}</button>
+    {work && <button type="button" class="a-btn danger" id="delete-work">削除</button>}
+  </div>
+</form>
+
+<script>
+  import { api, flash } from './client';
+  const form = document.getElementById('work-form') as HTMLFormElement;
+  const slug = form.dataset.slug;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const body = Object.fromEntries(new FormData(form));
+    try {
+      const saved = await api<{ slug: string }>(slug ? `/__dev/works/${slug}` : '/__dev/works', { method: slug ? 'PATCH' : 'POST', body });
+      // 編集は一覧へ戻る。新規作成は動画・ポスターを登録できるよう編集画面へ
+      location.href = slug ? '/admin?saved=1' : `/admin/works/${saved.slug}?created=1`;
+    } catch (err) { flash((err as Error).message, true); }
+  });
+  document.getElementById('delete-work')?.addEventListener('click', async () => {
+    if (!confirm(`この作品を削除します（src/content/works/${slug}/ の動画・ポスターも含めて消えます）。よろしいですか？`)) return;
+    try { await api(`/__dev/works/${slug}`, { method: 'DELETE' }); location.href = '/admin?deleted=1'; }
+    catch (err) { flash((err as Error).message, true); }
+  });
+</script>

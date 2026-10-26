@@ -1,0 +1,38 @@
+# 依存関係
+node_modules/
+
+# ビルド成果物・生成物
+dist/
+.astro/
+worker-configuration.d.ts
+
+# Wrangler（ローカルの D1・R2・KV の状態、deploy 時の生成設定）
+.wrangler/
+
+# シークレット（Wrangler は .dev.vars と .env の両方を読む）
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+!.env.example
+
+# 仕様書・作業メモ（公開しない）
+docs/
+ref/
+# 画像の元データ（先頭の / でプロジェクト直下の assets/ だけに限定）
+/assets/
+
+# 一時ファイル
+*.tmp
+
+# ログ
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS・エディタ
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/

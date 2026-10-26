@@ -1,0 +1,78 @@
+---
+import '@fontsource-variable/noto-sans-jp';
+import '../styles/tokens.css';
+import '../styles/global.css';
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} — Admin (local)</title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  </head>
+  <body>
+    <header class="a-head">
+      <a href="/admin" class="a-brand display">ADMIN</a>
+      <nav><a href="/admin">作品一覧</a><a href="/admin/works/new">新規作成</a><a href="/" target="_blank" rel="noopener">サイトを見る ↗</a></nav>
+      <span class="a-user">ローカル専用</span>
+    </header>
+    <main class="a-main">
+      <h1 class="section-title">{title}</h1>
+      <p class="a-flash" role="status" id="flash" hidden></p>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  .a-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 12px 24px; border-bottom: 1px solid var(--line); background: var(--bg); position: sticky; top: 0; z-index: 10; }
+  .a-brand { font-weight: 600; letter-spacing: var(--track-wide); text-decoration: none; }
+  .a-head nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  .a-head nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; text-decoration: none; color: var(--text-2); }
+  .a-head nav a:hover { color: var(--accent-2); }
+  .a-user { margin-left: auto; font-size: 12px; color: var(--text-2); }
+  .a-main { max-width: 1080px; margin: 0 auto; padding: 40px 24px 96px; display: flex; flex-direction: column; gap: 24px; }
+  .a-flash { padding: 12px 16px; border: 1px solid var(--line); background: var(--surface); font-size: 14px; }
+  .a-flash.error { border-color: var(--text); background: var(--field); }
+  .a-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .a-table th, .a-table td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+  .a-table th { font-family: var(--font-display); font-size: 12px; font-weight: 500; letter-spacing: .16em; color: var(--text-2); }
+  .a-thumb { width: 96px; aspect-ratio: 16 / 10; object-fit: cover; background: var(--surface); border: 1px solid var(--line); }
+  .a-thumb-empty { display: block; }
+  .a-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .a-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 13px; text-decoration: none; }
+  .a-btn:hover { border-color: var(--accent-2); color: var(--accent-2); }
+  .a-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .a-btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .a-btn.danger:hover { border-color: var(--text); color: var(--text); background: var(--surface); }
+  .a-badge { display: inline-block; padding: 2px 8px; font-size: 12px; border: 1px solid var(--line); }
+  .a-badge.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+  /* 2 列固定（狭い画面は 1 列）。ラベルとヒントは 1 行にまとめ、入力欄の高さを揃える */
+  .a-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+  .a-form .full { grid-column: 1 / -1; }
+  @media (max-width: 720px) { .a-form { grid-template-columns: minmax(0, 1fr); } }
+  .a-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .a-field > label, .a-radios legend { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; font-size: 13px; font-weight: 500; }
+  .a-field input, .a-field textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); background: var(--field); font-size: 15px; font-weight: 400; border-radius: 0; }
+  .a-ym { display: flex; gap: 8px; }
+  .a-ym select { flex: 0 0 120px; min-height: 44px; padding: 0 10px; border: 1px solid var(--line); background: var(--field); font-size: 15px; border-radius: 0; }
+  .a-field textarea { min-height: 140px; line-height: 1.8; resize: vertical; }
+  .a-field input:focus, .a-field textarea:focus { outline: 2px solid var(--accent-2); outline-offset: -1px; }
+  .a-radios { min-width: 0; border: 0; margin: 0; padding: 0; }
+  .a-radios legend { padding: 0; margin-bottom: 8px; }
+  .a-options { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; }
+  .a-options label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); background: var(--field); font-size: 14px; cursor: pointer; }
+  .a-options label:has(input:checked) { border-color: var(--accent-2); background: var(--surface); }
+  .a-options input { accent-color: var(--accent-2); margin: 0; }
+  .a-hint { font-size: 12px; font-weight: 400; color: var(--text-2); }
+  .a-media { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .a-media > p { grid-column: 1 / -1; }
+  .a-card { border: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; gap: 12px; background: var(--bg); }
+  .a-card h2 { font-family: var(--font-display); font-size: 14px; letter-spacing: .2em; font-weight: 500; }
+  .a-card video, .a-card img { width: 100%; max-height: 320px; object-fit: contain; background: var(--text); }
+  .a-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+</style>

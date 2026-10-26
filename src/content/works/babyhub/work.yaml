@@ -1,0 +1,12 @@
+title: Baby Hub
+category: INDIE
+device: sp
+platform: Mobile (PWA)
+tools: React / TypeScript  / Firebase / GAS
+year: "2026"
+month: 10
+repoUrl: https://github.com/kzmcode/baby-hub
+published: true
+addedAt: 2026-10-25T02:02:14.066Z
+descriptionEn: A PWA that lets families with a newborn log diapers, feedings, and sleep in seconds and see, at a glance, the baby's daily rhythm and who did what. It also brings schedules, to-dos, shopping, handover notes, and health records into one shared place, so caregivers can hand off care without asking each other.
+description: おむつ・授乳・睡眠などのお世話を数秒で記録し、「誰が何をしたか」と生活リズムを一目で共有できる PWA です。予定・ToDo・買い物・申し送り・健康情報もまとめ、引き継ぎを1つのアプリで完結させます。

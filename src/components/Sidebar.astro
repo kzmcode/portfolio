@@ -1,0 +1,91 @@
+---
+import { site } from '../content/site';
+
+// 縦位置(vh)と右パディングは CSS（.nav-*）で指定：padding-right = 135 × (top/100) + 28
+const items = [
+  { label: 'ABOUT', href: '#about', id: 'about' },
+  { label: 'WORKS', href: '#work', id: 'work' },
+  { label: 'CONTACT', href: '#contact', id: 'contact' },
+];
+---
+<aside class="sidebar" aria-label="サイトナビゲーション">
+  <a class="logo" href="#top" aria-label="ホーム">{site.logo}</a>
+  <nav class="nav" aria-label="メイン">
+    <span class="nav-band" aria-hidden="true"></span>
+    {items.map((it) => (
+      <a class:list={['nav-item', `nav-${it.id}`]} href={it.href} data-spy={it.id ?? undefined}>{it.label}</a>
+    ))}
+  </nav>
+  <ul class="sns">
+    {site.sns.map((s) => <li><a href={s.href} target="_blank" rel="noopener noreferrer">{s.label}<span class="visually-hidden">（新しいタブで開きます）</span></a></li>)}
+  </ul>
+</aside>
+<svg class="sidebar-edge" aria-hidden="true" viewBox="0 0 300 100" preserveAspectRatio="none"><path d="M300 0 L165 100" stroke="var(--line)" stroke-width="1.5" vector-effect="non-scaling-stroke"></path></svg>
+
+<style>
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0; z-index: 20;
+    width: var(--sidebar-w); height: 100vh; height: 100svh;
+    background: var(--bg);
+    clip-path: polygon(0 0, var(--sidebar-w) 0, var(--sidebar-w-min) 100%, 0 100%);
+  }
+  .sidebar-edge { position: fixed; left: 0; top: 0; z-index: 21; width: var(--sidebar-w); height: 100vh; height: 100svh; pointer-events: none; overflow: visible; }
+  .logo {
+    position: absolute; left: 56px; top: 56px; display: flex; align-items: center; min-height: 44px;
+    font-family: var(--font-display); font-weight: 500; font-size: 30px; letter-spacing: .08em; line-height: 1;
+    text-decoration: none; color: var(--text);
+  }
+  .logo:hover { color: var(--accent-2); }
+  .nav { font-family: var(--font-display); font-size: 14px; letter-spacing: var(--track-wide); }
+  .nav-item {
+    position: absolute; left: 0; right: 0; top: var(--top); height: 48px; padding-right: var(--pr);
+    display: flex; align-items: center; justify-content: flex-end;
+    color: var(--text-2); text-decoration: none; z-index: 1;
+    transform: skewY(-3deg); /* 帯と同じ角度で斜めに */
+  }
+  .nav-about { --top: 33vh; --pr: 73px; }
+  .nav-work { --top: 40vh; --pr: 82px; }
+  .nav-contact { --top: 47vh; --pr: 92px; }
+  /* 画面が低いときは SNS と重ならないようメニューを下げる */
+  @media (max-height: 760px) {
+    .nav-about { --top: 40vh; --pr: 82px; }
+    .nav-work { --top: 47vh; --pr: 92px; }
+    .nav-contact { --top: 54vh; --pr: 101px; }
+  }
+  @media (max-height: 600px) {
+    .nav-about { --top: 45vh; --pr: 89px; }
+    .nav-work { --top: 52vh; --pr: 98px; }
+    .nav-contact { --top: 59vh; --pr: 108px; }
+  }
+  .nav-item:hover { color: var(--accent-2); }
+  .nav-item[aria-current='location'] { color: var(--text); font-weight: 500; }
+  .nav-item:focus-visible { outline-offset: -4px; }
+  .nav-band {
+    position: absolute; left: 0; right: 0; top: var(--band-top, 40vh); height: 48px;
+    background: var(--line); transform: skewY(-3deg); opacity: 0;
+    transition: top .3s var(--ease-out), opacity .3s;
+  }
+  .nav.has-active .nav-band { opacity: 1; }
+  /* SNS はロゴの下に縦並び（108〜240px） */
+  .sns { position: absolute; left: 56px; top: 108px; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; font-family: var(--font-display); font-size: 12px; letter-spacing: .14em; }
+  .sns a { display: flex; align-items: center; min-height: 32px; color: var(--text-2); text-decoration: none; }
+  .sns a:hover { color: var(--accent-2); }
+
+  @media (prefers-reduced-motion: reduce) { .nav-band { transition: none; } }
+
+  @media (max-width: 760px) {
+    .sidebar {
+      position: sticky; top: 0; width: auto; height: auto; clip-path: none;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    /* スマホのヘッダーはロゴのみ（セクションへのメニューは出さない） */
+    .sidebar-edge, .sns, .nav { display: none; }
+    .logo { position: static; font-size: 22px; }
+  }
+</style>
+
+<script>
+  import { initScrollSpy } from '../scripts/scrollspy';
+  initScrollSpy();
+</script>

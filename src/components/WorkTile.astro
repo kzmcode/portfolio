@@ -1,0 +1,48 @@
+---
+import type { WorkView } from '../lib/works';
+import ArrowIcon from './ArrowIcon.astro';
+interface Props { work: WorkView; index: number }
+const { work, index } = Astro.props;
+---
+<button type="button" class:list={['work-tile', { 'no-poster': !work.poster }]} data-work-index={index} aria-haspopup="dialog">
+  {work.poster && <img class="tile-img" src={work.poster} alt="" loading="lazy" decoding="async" />}
+  <span class="tile-fill" aria-hidden="true"></span>
+  <span class="tile-body">
+    <span class="tile-meta">{work.num} / {work.category}</span>
+    <span class="tile-title">{work.title}<ArrowIcon size={20} class="work-arrow" /></span>
+  </span>
+</button>
+
+<style>
+  /* 地は設定した画像のみ。hover / focus で明るい紫（--accent）の単色がせり上がり、ラベルが現れる */
+  .work-tile {
+    position: relative; display: block; width: 100%; aspect-ratio: 11 / 10; padding: 0; overflow: hidden;
+    text-align: left; color: var(--text); background: var(--surface); border: 1.5px solid var(--line);
+  }
+  .tile-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  /* 塗りは下からせり上がり、外すと下へ戻る */
+  .tile-fill { position: absolute; inset: 0; background: var(--accent); transform: translateY(calc(100% + 2px)); transition: transform .4s var(--ease-out); }
+  .work-tile:hover .tile-fill, .work-tile:focus-visible .tile-fill { transform: translateY(0); }
+  .tile-body {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 24px;
+    opacity: 0; transition: opacity .2s var(--ease-out);
+  }
+  /* 紫の塗り（.4s）がほぼ上がった頃にラベルを出す。外すときは即座に消す */
+  .work-tile:hover .tile-body, .work-tile:focus-visible .tile-body { opacity: 1; transition-delay: .15s; }
+  .work-tile:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 4px; }
+  /* 文字は濃色（紫の上で 5.3:1） */
+  .tile-meta { font-size: 13px; letter-spacing: .04em; }
+  .tile-title { display: inline-flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 700; letter-spacing: .01em; line-height: 1.35; }
+  .tile-title :global(.work-arrow) { flex: none; transition: transform .3s; }
+  .work-tile:hover :global(.work-arrow) { transform: translate(3px, -3px); }
+
+  /* 画像が無い作品、ホバーできない端末ではラベルを常に表示（無いと何の作品か分からないため） */
+  .no-poster .tile-body { opacity: 1; }
+  /* スマホ：アニメーション・紫の塗り・ラベルなしで画像のみ（ラベルは読み上げ用に視覚的にだけ隠す） */
+  @media (hover: none), (max-width: 760px) {
+    .tile-fill { display: none; }
+    .work-tile:not(.no-poster) .tile-body { opacity: 1; inset: auto; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+  }
+  @media (max-width: 600px) { .tile-body { padding: 14px; } .tile-title { font-size: 15px; } }
+  @media (prefers-reduced-motion: reduce) { .tile-fill, .tile-body, .tile-title :global(.work-arrow) { transition: none; } }
+</style>

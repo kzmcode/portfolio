@@ -1,0 +1,60 @@
+---
+import Admin from '../AdminLayout.astro';
+import { workMedia } from '../../lib/media';
+import { formatDate, listWorks, workNum } from '../../lib/works';
+export const prerender = false;
+const works = await listWorks({ drafts: true });
+// サイトと同じ番号（公開中の作品だけで古い順）。非公開は番号なし
+const published = works.filter((w) => w.data.published);
+const nums = new Map(published.map((w, i) => [w.id, workNum(i, published.length)]));
+const deleted = Astro.url.searchParams.has('deleted');
+const saved = Astro.url.searchParams.has('saved');
+---
+<Admin title="WORKS">
+  {deleted && <p class="a-flash">削除しました</p>}
+  {saved && <p class="a-flash">保存しました</p>}
+  <p class="a-hint">トップには公開中の作品が新しい順（年 → 月 → 登録日時）で表示されます。No. は公開中の作品の古い順の通し番号です。作品は <code>src/content/works/</code> のファイルに保存され、本番への反映は <code>pnpm run deploy</code>。</p>
+  <table class="a-table" id="works-table">
+    <thead><tr><th>No.</th><th>サムネイル</th><th>タイトル</th><th>年・月</th><th>カテゴリ</th><th>device</th><th>公開</th><th>操作</th></tr></thead>
+    <tbody>
+      {works.map((w) => (
+        <tr data-slug={w.id}>
+          <td class="display">{nums.get(w.id) ?? '—'}</td>
+          <td>{workMedia(w.id).poster ? <img class="a-thumb" src={workMedia(w.id).poster} alt="" width="96" height="60" loading="lazy" /> : <span class="a-thumb a-thumb-empty" />}</td>
+          <td><a href={`/admin/works/${w.id}`}>{w.data.title}</a><br /><span class="a-hint">{w.id}</span></td>
+          <td>{formatDate(w.data)}</td>
+          <td>{w.data.category}</td>
+          <td>{w.data.device}</td>
+          <td><button type="button" class:list={['a-badge', { on: w.data.published }]} data-toggle data-published={String(w.data.published)}>{w.data.published ? '公開' : '非公開'}</button></td>
+          <td>
+            <div class="a-actions">
+              <a class="a-btn" href={`/admin/works/${w.id}`}>編集</a>
+            </div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  {!works.length && <p>作品がありません。<a href="/admin/works/new">新規作成</a></p>}
+</Admin>
+
+<script>
+  import { api, flash } from '../client';
+  const tbody = document.querySelector<HTMLTableSectionElement>('#works-table tbody')!;
+  tbody.addEventListener('click', async (e) => {
+    const t = e.target as HTMLElement;
+    const row = t.closest('tr') as HTMLTableRowElement | null;
+    if (!row) return;
+    const toggle = t.closest<HTMLButtonElement>('[data-toggle]');
+    if (toggle) {
+      const next = toggle.dataset.published !== 'true';
+      try {
+        await api(`/__dev/works/${row.dataset.slug}`, { method: 'PATCH', body: { published: String(next) } });
+        toggle.dataset.published = String(next);
+        toggle.textContent = next ? '公開' : '非公開';
+        toggle.classList.toggle('on', next);
+        flash(next ? '公開しました' : '非公開にしました');
+      } catch (err) { flash(String((err as Error).message), true); }
+    }
+  });
+</script>

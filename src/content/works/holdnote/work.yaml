@@ -1,0 +1,12 @@
+title: HoldNote
+category: INDIE
+device: pc
+platform: Desktop (macOS)
+tools: Rust / whisper.cpp / Google Drive API / SQLite
+year: "2026"
+month: 10
+repoUrl: https://github.com/kzmcode/holdnote
+published: true
+addedAt: 2026-10-26T04:52:11.700Z
+descriptionEn: A macOS menu bar app that records only while you hold a hotkey, transcribes your voice on the Mac with whisper.cpp, and saves it to a chosen Google Drive folder as a Markdown note. The audio never leaves the Mac, and notes taken offline wait in a local queue and upload once you are back online.
+description: ホットキーを押している間だけ録音し、Mac の中で whisper.cpp による文字起こしを行い、Markdown のメモとして Google Drive の指定フォルダに保存する macOS メニューバーアプリです。音声は Mac の外に出さず、オフライン中のメモは端末内のキューで待機して、つながり次第アップロードします。

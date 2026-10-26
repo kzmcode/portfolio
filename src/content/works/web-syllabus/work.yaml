@@ -1,0 +1,12 @@
+title: KMC Web Syllabus
+category: PROFESSIONAL
+device: pc
+platform: Web
+tools: Next.js / React / TypeScript / Firebase
+year: "2026"
+month: 9
+url: https://kamiyama-syllabus-prod.web.app
+published: true
+addedAt: 2026-10-25T02:02:14.066Z
+descriptionEn: A web application for browsing and managing course syllabi at Kamiyama Marugoto College of Design, Engineering and Entrepreneurship. Students can search by course title, keyword, or instructor, explore subjects by field and academic year, and view learning objectives, lesson plans, and assessment methods on their phones.
+description: 神山まるごと高専のシラバスを閲覧・管理するWebアプリです。科目名・キーワード・教員名による検索、年度別・分野別の科目一覧から、学びたい授業を探せます。スマートフォンでも到達目標・授業計画・評価方法を読みやすく確認でき、カリキュラムマップや印刷表示にも対応しています。

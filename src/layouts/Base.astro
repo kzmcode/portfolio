@@ -1,0 +1,38 @@
+---
+import '@fontsource-variable/noto-sans-jp';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import { site } from '../content/site';
+interface Props { title?: string; description?: string; noindex?: boolean }
+const { title = site.seoTitle, description = site.description, noindex = false } = Astro.props;
+// build.format: 'file' で静的生成すると pathname が /index.html・/privacy.html になるため、配信される URL（/・/privacy）に直す
+const canonical = new URL(Astro.url.pathname.replace(/(index)?\.html$/, ''), Astro.site ?? Astro.url);
+const ogImage = new URL('/og.png', Astro.site ?? Astro.url);
+---
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#F5F7FC" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/jost-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jost-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jost-500.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

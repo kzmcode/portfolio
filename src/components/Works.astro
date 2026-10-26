@@ -1,0 +1,23 @@
+---
+import type { WorkView } from '../lib/works';
+import WorkTile from './WorkTile.astro';
+interface Props { works: WorkView[] }
+const { works } = Astro.props;
+---
+<section id="work" class="works below-slant" aria-labelledby="work-title">
+  <h2 id="work-title" class="section-title">WORKS</h2>
+  {works.length ? (
+    <div class="works-grid">
+      {works.map((w, i) => <WorkTile work={w} index={i} />)}
+    </div>
+  ) : (
+    <p class="empty">作品は準備中です。</p>
+  )}
+</section>
+
+<style>
+  .works { padding-top: var(--section-y); padding-bottom: var(--section-y); display: flex; flex-direction: column; gap: 48px; }
+  .works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 280px)); gap: 24px; }
+  @media (max-width: 600px) { .works-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+  .empty { color: var(--text-2); }
+</style>

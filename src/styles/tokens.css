@@ -1,0 +1,35 @@
+/* design tokens */
+:root {
+  /* palette */
+  --bg: #F5F7FC;
+  --surface: #ECEFFA;
+  --text: #171C28;
+  --text-2: #616A7E;
+  --accent: #8D86D8;
+  --accent-2: #6F78C8;
+  --line: #D8DDF0;
+
+  /* derived */
+  --tile-hover-line: #CDD1EC;
+  --field: #FFFFFF;
+  --placeholder: #8A92A6;
+  --device-screen: #232838;
+  --scrim: rgba(23, 28, 40, 0.72);
+  --shadow-device: 0 24px 48px rgba(23, 28, 40, 0.16);
+
+  /* type */
+  --font-display: "Jost", "Futura", "Century Gothic", sans-serif;
+  --font-body: "Noto Sans JP Variable", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", system-ui, sans-serif;
+  --track-wide: 0.24em;
+  --track-hero: 0.32em;
+
+  /* layout */
+  --gutter: clamp(24px, 6vw, 96px);
+  --section-y: 112px;
+  --sidebar-w: 300px;      /* サイドバー上端の幅 */
+  --sidebar-w-min: 165px;  /* サイドバー下端の幅（斜め） */
+
+  /* motion */
+  --ease-out: cubic-bezier(.2, .7, .2, 1);
+}
+

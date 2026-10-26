@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portfolio",
+  // 個人アカウント（kzm.suzuki@gmail.com）に固定。別アカウントの認証情報では操作できない
+  "account_id": "45a8b9a26c6dd7e2251abed16795062b",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // 本番ドメイン（Cloudflare に追加済みのゾーンであること）。*.workers.dev は使わない
+  "routes": [{ "pattern": "kzmcode.dev", "custom_domain": true }],
+  "workers_dev": false,
+
+  "d1_databases": [
+    { "binding": "DB", "database_name": "portfolio", "database_id": "df7a4eda-db47-4299-8cd8-72c30519d59e", "migrations_dir": "migrations" }
+  ],
+
+  // 問い合わせの通知メール。Email Routing（無料）で検証済みの宛先にだけ送れる。送信元は CONTACT_FROM（kzmcode.dev）
+  "send_email": [{ "name": "SEND_EMAIL", "destination_address": "kzm.suzuki@gmail.com" }],
+
+  "vars": {
+    // Turnstile 本番ウィジェット（kzmcode.dev・invisible）。ローカルは .dev.vars のテスト用シークレットで常に成功する
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAFlOYpLVV_paglsk",
+    "CONTACT_TO": "kzm.suzuki@gmail.com",
+    "CONTACT_FROM": "noreply@kzmcode.dev"
+  }
+  // secrets: wrangler secret put TURNSTILE_SECRET
+}

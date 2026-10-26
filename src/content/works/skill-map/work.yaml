@@ -1,0 +1,11 @@
+title: Web Programming I Skill Map
+category: INDIE
+device: pc
+platform: Web
+tools: React / TypeScript / Firebase / GAS
+year: "2025"
+month: 9
+published: true
+addedAt: 2026-10-26T05:20:15.930Z
+descriptionEn: A learning map built for students in the "Web Programming I" course. After signing in with a Google account, students see the course content as cards stacked in depth, and the matching Notion pages open up as they progress. An indicator on the right shows how many classmates have cleared each piece of content, so students can see where the class as a whole is.
+description: 授業「Webプログラミング I」の受講生向けに作った学習マップです。Google アカウントでログインすると、コンテンツが奥行きのあるカードとして表示され、進捗に応じて対応する Notion ページを開けるようになります。画面右のインジケーターには各コンテンツをクリアしたクラスメイトの人数が表示され、クラス全体がどこにいるかが分かります。

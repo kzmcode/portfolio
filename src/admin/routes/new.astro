@@ -1,0 +1,9 @@
+---
+import Admin from '../AdminLayout.astro';
+import WorkForm from '../WorkForm.astro';
+export const prerender = false;
+---
+<Admin title="NEW WORK">
+  <p class="a-hint">作品は src/content/works/&lt;slug&gt;/work.yaml に保存されます。作成後の編集画面で動画・ポスターも登録できます。</p>
+  <WorkForm />
+</Admin>

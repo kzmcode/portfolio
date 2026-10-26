@@ -1,0 +1,7 @@
+allowBuilds:
+  esbuild: true
+  workerd: true
+
+# miniflare（ローカル開発用）が引く undici の既知脆弱性を回避（GHSA-f72v-6w45-q472 ほか）
+overrides:
+  undici: '>=7.30.1 <8'

@@ -1,0 +1,12 @@
+title: Future Call
+category: INDIE
+device: pc
+platform: Web
+tools: HTML / CSS / JavaScript / Python / faster-whisper /  Gemini TTS /  Chatterbox VC
+year: "2026"
+month: 9
+repoUrl: https://github.com/kzmcode/future-call
+published: true
+addedAt: 2026-10-26T05:59:07.940Z
+descriptionEn: An exhibition web app where visitors talk about a past failure and then get a phone call from themselves ten years in the future, telling them, in a voice resembling their own, how that failure became a turning point. Speech is transcribed locally with faster-whisper, the story is written by Gemini, and Gemini TTS narration is converted to the visitor's voice with Chatterbox, so only text leaves the PC.
+description: 自分の「失敗した体験」を声で語ると、10年後の自分から電話がかかってきて、体験者に似た声で「あの失敗は未来へのきっかけだった」と語りかける展示用 Web アプリです。音声認識は faster-whisper でローカルに行い、物語は Gemini で生成し、Gemini TTS の読み上げを Chatterbox で体験者の声色に変換するため、外部に送るのは文章だけです。

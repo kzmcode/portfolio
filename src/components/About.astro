@@ -1,0 +1,41 @@
+---
+import { site } from '../content/site';
+const a = site.about;
+---
+<section id="about" class="about below-slant" aria-labelledby="about-title">
+  <div class="about-side">
+    <h2 id="about-title" class="section-title">ABOUT</h2>
+    <img class="portrait" src={a.portrait} alt={a.portraitAlt} width="720" height="720" loading="lazy" decoding="async" />
+  </div>
+  <div class="about-body">
+    <div class="who">
+      <div class="name-row">
+        <p class="name display">{a.name}</p>
+        <p class="concept display" lang="en">{a.concept}</p>
+      </div>
+      <p class="role display">{a.role}</p>
+    </div>
+    <div class="message">
+      <p class="msg-en" lang="en">{a.messageEn}</p>
+      <p class="msg-ja">{a.messageJa}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about { padding-top: var(--section-y); padding-bottom: var(--section-y); display: flex; flex-wrap: wrap; gap: 56px; border-bottom: 1px solid var(--line); }
+  .about-side { flex: 1 1 260px; max-width: 360px; display: flex; flex-direction: column; gap: 24px; }
+  /* 白地のイラストを乗算で地色になじませる */
+  .portrait { width: 100%; height: auto; aspect-ratio: 1; mix-blend-mode: multiply; }
+  .about-body { flex: 3 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 40px; padding-top: 152px; }
+  .who { display: flex; flex-direction: column; gap: 14px; }
+  /* 名前の横にコンセプト（狭い幅では下に折り返す） */
+  .name-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 28px; }
+  .role { font-size: 14px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--text-2); }
+  .name { font-weight: 500; font-size: 40px; letter-spacing: .08em; line-height: 1; }
+  .message { display: flex; flex-direction: column; gap: 14px; }
+  .concept { font-size: 24px; line-height: 1.8; font-weight: 500; }
+  .msg-en { font-family: var(--font-display); font-size: 17px; line-height: 1.9; letter-spacing: .02em; }
+  .msg-ja { font-size: 15px; line-height: 2; color: var(--text-2); }
+  @media (max-width: 600px) { .about-side { max-width: none; } .about-body { padding-top: 0; flex-basis: 100%; } .concept { font-size: 20px; } .name { font-size: 32px; } }
+</style>
