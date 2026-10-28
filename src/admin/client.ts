@@ -18,3 +18,7 @@ export function flash(msg: string, error = false) {
   el.hidden = false;
   el.setAttribute('role', error ? 'alert' : 'status');
 }
+
+// 作品フォームの未保存チェック。読み込み時の内容と比べる
+export const formValues = (form: HTMLFormElement) => JSON.stringify(Object.fromEntries(new FormData(form)));
+export const isDirty = (form: HTMLFormElement) => form.dataset.initial !== undefined && formValues(form) !== form.dataset.initial;

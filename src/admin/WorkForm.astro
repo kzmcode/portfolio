@@ -75,21 +75,26 @@ const v = (k: 'title' | 'year' | 'tools' | 'platform' | 'descriptionEn' | 'descr
 </form>
 
 <script>
-  import { api, flash } from './client';
+  import { api, flash, formValues, isDirty } from './client';
   const form = document.getElementById('work-form') as HTMLFormElement;
   const slug = form.dataset.slug;
+  form.dataset.initial = formValues(form);
+  let leaving = false;
+  // 未保存の入力があるまま離れようとしたら確認する（保存・削除による遷移は除く）
+  addEventListener('beforeunload', (e) => { if (!leaving && isDirty(form)) e.preventDefault(); });
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const body = Object.fromEntries(new FormData(form));
     try {
       const saved = await api<{ slug: string }>(slug ? `/__dev/works/${slug}` : '/__dev/works', { method: slug ? 'PATCH' : 'POST', body });
+      leaving = true;
       // 編集は一覧へ戻る。新規作成は動画・ポスターを登録できるよう編集画面へ
       location.href = slug ? '/admin?saved=1' : `/admin/works/${saved.slug}?created=1`;
     } catch (err) { flash((err as Error).message, true); }
   });
   document.getElementById('delete-work')?.addEventListener('click', async () => {
     if (!confirm(`この作品を削除します（src/content/works/${slug}/ の動画・ポスターも含めて消えます）。よろしいですか？`)) return;
-    try { await api(`/__dev/works/${slug}`, { method: 'DELETE' }); location.href = '/admin?deleted=1'; }
+    try { await api(`/__dev/works/${slug}`, { method: 'DELETE' }); leaving = true; location.href = '/admin?deleted=1'; }
     catch (err) { flash((err as Error).message, true); }
   });
 </script>
