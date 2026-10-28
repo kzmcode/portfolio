@@ -1,0 +1,12 @@
+title: Jotbound
+category: INDIE
+device: sp
+platform: Mobile (PWA)
+tools: React / TypeScript / Firebase / Gemini API
+year: "2026"
+month: 10
+repoUrl: https://github.com/kzmcode/jotbound
+published: true
+addedAt: 2026-10-28T02:25:18.178Z
+descriptionEn: An app that turns the thoughts you have while reading into notes, just by speaking. Tap the orb and talk. AI picks out the book title, page, quote, your comment and tags, and shapes them into a note. A review screen always comes up before saving, so you can check and fix everything first.
+description: 読みながら思いついたことを、話すだけで読書メモにできるアプリです。丸いボタンを押して話すと、AI が書名・ページ・引用・感想・タグを聞き分けて、メモの形に整えます。保存する前に必ず確認画面が出るので、内容を見て直してから残せます。
