@@ -1,0 +1,12 @@
+title: Qivmi
+category: INDIE
+device: pc
+platform: Desktop (macOS)
+tools: Rust / Tauri / React / TypeScript / SQLite / Gmail API
+year: "2026"
+month: 10
+repoUrl: https://github.com/kzmcode/qivmi
+published: true
+addedAt: 2026-10-30T08:00:00.209Z
+descriptionEn: A macOS app that groups your Gmail by person and lets you read and reply in a chat-style bubble UI. Its serverless design means mail only travels between your Mac and Google, and it supports Japanese full-text search and undo send.
+description: Gmail のメールを相手ごとにまとめ、チャットのような吹き出し UI で読んだり返信したりできる macOS アプリです。メールは自分の Mac と Google の間だけでやり取りするサーバーレス設計で、日本語の全文検索や送信の取り消しにも対応しています。
