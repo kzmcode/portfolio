@@ -1,6 +1,6 @@
 import type { WorkView } from '../lib/works';
 
-/** Works タイル → 2 段組モーダル。動画は開いたときに読み込み、閉じたら解放する */
+/** Works タイル → 2 段組モーダル。動画はカードにホバーした時点から読み込み、閉じたら解放する */
 export function initWorkModal() {
   const root = document.getElementById('work-modal');
   const dataEl = document.getElementById('works-data');
@@ -31,6 +31,33 @@ export function initWorkModal() {
     });
   };
 
+  const makeVideo = (w: WorkView) => {
+    const v = document.createElement('video');
+    v.muted = true;
+    v.loop = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    v.setAttribute('aria-label', `${w.title} のプレビュー動画`);
+    if (w.poster) v.poster = w.poster;
+    v.src = w.video!;
+    return v;
+  };
+
+  // カードにホバー・フォーカス・タッチした時点で動画を読み込み始め、開いたらその要素をそのまま使う
+  const warm = new Map<number, HTMLVideoElement>();
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  const prime = (i: number) => {
+    if (saveData || warm.has(i) || !works[i]?.video) return;
+    warm.set(i, makeVideo(works[i]));
+    // 読み込み中の動画は直近 3 件まで
+    for (const [k, v] of warm) {
+      if (warm.size <= 3) break;
+      v.removeAttribute('src');
+      v.load();
+      warm.delete(k);
+    }
+  };
+
   const render = (i: number) => {
     const w = works[i];
     current = i;
@@ -58,16 +85,10 @@ export function initWorkModal() {
     noPreview.hidden = !!w.video;
     if (w.video) {
       const screen = frames[w.device].querySelector<HTMLElement>('[data-slot="screen"]')!;
-      const v = document.createElement('video');
-      v.muted = true;
-      v.loop = true;
-      v.playsInline = true;
+      const v = warm.get(i) ?? makeVideo(w);
+      warm.delete(i);
       v.autoplay = !reduce.matches;
       v.controls = w.device === 'pc' || reduce.matches;
-      v.preload = 'auto';
-      v.setAttribute('aria-label', `${w.title} のプレビュー動画`);
-      if (w.poster) v.poster = w.poster;
-      v.src = w.video;
       screen.replaceChildren(v);
       if (!reduce.matches) v.play().catch(() => {});
     }
@@ -101,7 +122,11 @@ export function initWorkModal() {
 
   const step = (d: number) => render((current + d + works.length) % works.length);
 
-  tiles.forEach((t) => t.addEventListener('click', () => open(Number(t.dataset.workIndex), t)));
+  tiles.forEach((t) => {
+    const i = Number(t.dataset.workIndex);
+    t.addEventListener('click', () => open(i, t));
+    for (const type of ['pointerenter', 'focus', 'touchstart'] as const) t.addEventListener(type, () => prime(i), { passive: true });
+  });
   root.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', close));
   root.querySelector('[data-prev]')!.addEventListener('click', () => step(-1));
   root.querySelector('[data-next]')!.addEventListener('click', () => step(1));
