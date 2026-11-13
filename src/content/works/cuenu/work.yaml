@@ -1,0 +1,12 @@
+title: Cuenu
+category: INDIE
+device: sp
+platform: Mobile (PWA) / Desktop (macOS)
+tools: Rust / Tauri / React / TypeScript / Cloudflare / Gemini API
+year: "2026"
+month: 11
+repoUrl: https://github.com/kzmcode/cuenu
+published: true
+addedAt: 2026-11-13T08:53:40.350Z
+descriptionEn: A personal memo app where you jot down thoughts as they come, and an AI later reads them back, finds connections and next steps, and posts suggestions to the same timeline. On the Mac, a single shortcut opens quick input; on the phone, it runs as a PWA. It works offline and syncs on reconnect, and the AI learns from your likes and replies.
+description: 思いついたことを雑に書き溜めると、AI があとから読み返して関連や次の行動を見つけ、同じタイムラインに投稿してくれる自分専用のメモアプリです。Mac ではショートカット1つでクイック入力を開け、スマホでは PWA として使えます。オフラインでも書けて、つながり次第同期し、AI は「いいね」や返信への反応から提案を改善します。
