@@ -1,6 +1,8 @@
 ---
 // SNS アイコン（Simple Icons のパス、24×24）
-interface Props { icon: 'x' | 'github' | 'zenn'; size?: number }
+// note は Simple Icons にないため、公式ブランドガイドライン（help-note.com/hc/ja/articles/360000235582）の
+// 「n」アイコンを角丸の正方形に入れて使う。色は基本色の黒・サブカラーの白のみ（変更・ホバーでの色変化は不可）
+interface Props { icon: 'x' | 'github' | 'zenn' | 'note'; size?: number }
 const { icon, size = 22 } = Astro.props;
 const paths = {
   x: 'M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z',
@@ -8,4 +10,11 @@ const paths = {
   zenn: 'M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.585-.353z',
 };
 ---
-<svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={paths[icon]}></path></svg>
+{icon === 'note' ? (
+  <svg width={size} height={size} viewBox="0 0 493 493" aria-hidden="true">
+    <rect x="1" y="1" width="490.2" height="490.2" rx="104" fill="#000" />
+    <path d="M139.2 141.7C180.4 141.7 236.8 139.6 277.3 140.7C331.6 142.1 352.1 165.8 352.8 224.2C353.5 257.3 352.8 351.9 352.8 351.9H294C294 269.1 294.3 255.4 294 229.3C293.3 206.3 286.8 195.4 269.1 193.3C250.4 191.2 198 193 198 193V352H139.2V141.7Z" fill="#fff" />
+  </svg>
+) : (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={paths[icon]}></path></svg>
+)}

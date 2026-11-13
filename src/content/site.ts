@@ -13,6 +13,7 @@ export const site = {
     { label: 'X', icon: 'x', href: 'https://x.com/SuzukiKzm' },
     { label: 'GitHub', icon: 'github', href: 'https://github.com/kzmcode/' },
     { label: 'Zenn', icon: 'zenn', href: 'https://zenn.dev/szkkzm' },
+    { label: 'note', icon: 'note', href: 'https://note.com/kzm_suzuki' },
   ],
   privacyHref: '/privacy',
   about: {
