@@ -3,8 +3,8 @@
  * ローカル専用の管理画面。`astro dev` のときだけルートを追加し、本番ビルドには一切含めない。
  *   /admin, /admin/works/new, /admin/works/:slug   作品の一覧・作成・編集（画面は src/admin/routes/）
  *   /__dev/works, /__dev/works/:slug               作品の作成（POST）・更新（PATCH）・削除（DELETE）
- *   /__dev/media?slug=&kind=video|poster           動画・ポスターの保存（PUT）・削除（DELETE）
- * 保存先は src/content/works/<slug>/（work.yaml・preview.mp4・poster.*）。ファイルの書き込みは Node 側のここで行う。
+ *   /__dev/media?slug=&kind=video|poster|frame     動画・ポスター・動画の 1 コマ目の保存（PUT）・削除（DELETE）
+ * 保存先は src/content/works/<slug>/（work.yaml・preview.mp4・poster.*・frame.webp）。ファイルの書き込みは Node 側のここで行う。
  * 編集した内容は `pnpm run deploy` で本番に反映する（トップはビルド時にコンテンツコレクションから静的生成）。
  */
 import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
@@ -17,6 +17,7 @@ const MAX_BYTES = 25 * 1024 * 1024; // 静的アセットの 1 ファイル上�
 const KINDS = {
   video: { base: 'preview', types: { 'video/mp4': 'mp4' } },
   poster: { base: 'poster', types: { 'image/webp': 'webp', 'image/jpeg': 'jpg', 'image/png': 'png' } },
+  frame: { base: 'frame', types: { 'image/webp': 'webp' } }, // 画面側で動画から切り出して送る
 };
 // YAML に書く順番（読みやすさのため）
 const FIELD_ORDER = ['title', 'category', 'device', 'platform', 'tools', 'year', 'month', 'url', 'repoUrl', 'published', 'addedAt', 'descriptionEn', 'description'];
@@ -80,7 +81,7 @@ export default function localAdmin() {
         const root = join(server.config.root, 'src/content/works');
         // ファイルを書き換えたあと、画面側にその内容が反映されるまで待ってから応答する（最大 5 秒）。
         // 待たないと、直後に開いた画面に古い内容や 404 が出る
-        /** @param {string} origin @param {string} slug @param {(state: { data: unknown; video: boolean; poster: boolean }) => boolean} ok */
+        /** @param {string} origin @param {string} slug @param {(state: { data: unknown; video: boolean; poster: boolean; frame: boolean }) => boolean} ok */
         const reflected = async (origin, slug, ok) => {
           for (let i = 0; i < 50; i++) {
             const state = await fetch(`${origin}/admin/__entry/${slug}`).then((r) => r.json(), () => null);
@@ -159,18 +160,20 @@ export default function localAdmin() {
               const slug = url.searchParams.get('slug') ?? '';
               const kind = /** @type {keyof typeof KINDS | null} */ (url.searchParams.get('kind'));
               if (!SLUG_RE.test(slug)) return send(400, { ok: false, error: 'slug が不正です' });
-              if (!kind || !(kind in KINDS)) return send(400, { ok: false, error: 'kind は video か poster' });
+              if (!kind || !(kind in KINDS)) return send(400, { ok: false, error: 'kind は video・poster・frame のいずれか' });
               const { base, types } = KINDS[kind];
               const dir = join(root, slug);
               if (!(await exists(join(dir, 'work.yaml')))) return send(404, { ok: false, error: '作品が見つかりません' });
               // 同じ種類の既存ファイル（poster.webp / poster.png など）を消す
+              // 動画を外す・差し替えるときは、古い動画の 1 コマ目も消す（新しいものは画面側が続けて送る）
+              const bases = kind === 'video' ? [base, KINDS.frame.base] : [base];
               const clear = async () => {
                 const names = await readdir(dir).catch(() => []);
-                await Promise.all(names.filter((n) => n.startsWith(`${base}.`)).map((n) => rm(join(dir, n))));
+                await Promise.all(names.filter((n) => bases.some((b) => n.startsWith(`${b}.`))).map((n) => rm(join(dir, n))));
               };
               if (req.method === 'DELETE') {
                 await clear();
-                await reflected(url.origin, slug, (state) => !state[kind]);
+                await reflected(url.origin, slug, (state) => !state[kind] && (kind !== 'video' || !state.frame));
                 return send(200, { ok: true });
               }
               if (req.method !== 'PUT') return send(405, { ok: false, error: 'method not allowed' });
@@ -182,7 +185,7 @@ export default function localAdmin() {
               await clear();
               const file = `${base}.${ext}`;
               await writeFile(join(dir, file), body);
-              await reflected(url.origin, slug, (state) => state[kind]);
+              await reflected(url.origin, slug, (state) => state[kind] && (kind !== 'video' || !state.frame));
               return send(201, { ok: true, path: `src/content/works/${slug}/${file}` });
             }
 

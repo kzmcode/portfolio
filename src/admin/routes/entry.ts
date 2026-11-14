@@ -10,7 +10,7 @@ export const GET: APIRoute = async ({ params }) => {
   const slug = params.slug ?? '';
   const entry = await getEntry('works', slug);
   const media = workMedia(slug);
-  return new Response(JSON.stringify({ data: entry?.data ?? null, video: !!media.video, poster: !!media.poster }), {
+  return new Response(JSON.stringify({ data: entry?.data ?? null, video: !!media.video, poster: !!media.poster, frame: !!media.frame }), {
     headers: { 'Content-Type': 'application/json' },
   });
 };

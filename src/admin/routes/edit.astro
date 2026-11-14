@@ -21,10 +21,16 @@ const media = workMedia(work.id);
         <label class="a-btn">ファイルを選択<input type="file" accept="video/mp4" data-upload="video" class="visually-hidden" /></label>
         {media.video && <button type="button" class="a-btn danger" data-remove="video">外す</button>}
       </div>
+      {media.video && (
+        <p class="a-hint">
+          1 コマ目（<code>frame.webp</code>）：{media.frame ? '作成済み' : '未作成'}。モーダルで再生が始まるまで表示します。動画を登録すると自動で作ります。
+          <button type="button" class="a-btn" data-frame={media.video}>{media.frame ? '作り直す' : '作成する'}</button>
+        </p>
+      )}
     </div>
     <div class="a-card">
       <h2>POSTER</h2>
-      <p class="a-hint"><code>src/content/works/{work.id}/poster.webp</code>（jpg / png 可。カード背景と動画の poster）</p>
+      <p class="a-hint"><code>src/content/works/{work.id}/poster.webp</code>（jpg / png 可。カード背景）</p>
       {media.poster ? <img src={media.poster} alt="" /> : <p class="a-hint">未設定</p>}
       <div class="a-row">
         <label class="a-btn">ファイルを選択<input type="file" accept="image/webp,image/jpeg,image/png" data-upload="poster" class="visually-hidden" /></label>
@@ -53,6 +59,33 @@ const media = workMedia(work.id);
     else location.href = `/admin/works/${slug}`; // slug も変えていたら新しい URL へ
   };
   const media = (kind: string, init: { method: string; raw?: Blob; type?: string }) => api(`/__dev/media?slug=${slug}&kind=${kind}`, init);
+
+  // 動画の 1 コマ目を WebP に切り出す（モーダルの動画の poster。動画と同じ比率なので、再生前後で絵がずれない）
+  const MAX_FRAME_WIDTH = 1280;
+  const firstFrame = async (src: string) => {
+    const v = document.createElement('video');
+    v.muted = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    v.src = src;
+    await new Promise((resolve, reject) => {
+      v.addEventListener('loadeddata', resolve, { once: true });
+      v.addEventListener('error', () => reject(new Error('動画を読み込めませんでした')), { once: true });
+    });
+    v.currentTime = 0;
+    await new Promise((resolve) => v.addEventListener('seeked', resolve, { once: true }));
+    const scale = Math.min(1, MAX_FRAME_WIDTH / v.videoWidth);
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(v.videoWidth * scale);
+    canvas.height = Math.round(v.videoHeight * scale);
+    canvas.getContext('2d')!.drawImage(v, 0, 0, canvas.width, canvas.height);
+    v.removeAttribute('src');
+    v.load();
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.85));
+    if (!blob || blob.type !== 'image/webp') throw new Error('1 コマ目を WebP にできませんでした');
+    return blob;
+  };
+  const saveFrame = async (src: string) => media('frame', { method: 'PUT', raw: await firstFrame(src), type: 'image/webp' });
   root.querySelectorAll<HTMLInputElement>('[data-upload]').forEach((input) => {
     input.addEventListener('change', async () => {
       const file = input.files?.[0];
@@ -61,10 +94,20 @@ const media = workMedia(work.id);
       try {
         await saveFormFirst();
         await media(input.dataset.upload!, { method: 'PUT', raw: file, type: file.type });
+        if (input.dataset.upload === 'video') {
+          const url = URL.createObjectURL(file);
+          try { await saveFrame(url); } finally { URL.revokeObjectURL(url); }
+        }
         done();
       } catch (err) { flash((err as Error).message, true); }
       input.value = '';
     });
+  });
+  const frameBtn = root.querySelector<HTMLButtonElement>('[data-frame]');
+  frameBtn?.addEventListener('click', async () => {
+    flash('1 コマ目を作成中…');
+    try { await saveFormFirst(); await saveFrame(frameBtn.dataset.frame!); done(); }
+    catch (err) { flash((err as Error).message, true); }
   });
   root.querySelectorAll<HTMLButtonElement>('[data-remove]').forEach((b) => {
     b.addEventListener('click', async () => {

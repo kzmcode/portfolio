@@ -19,6 +19,7 @@ export interface WorkView {
   repoUrl: string | null;
   video: string | null;
   poster: string | null;
+  frame: string | null; // 動画の 1 コマ目（モーダルで再生が始まるまで表示）
 }
 
 export const PLATFORM_LABEL: Record<WorkData['device'], string> = {

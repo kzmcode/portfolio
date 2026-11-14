@@ -38,7 +38,7 @@ export function initWorkModal() {
     v.playsInline = true;
     v.preload = 'auto';
     v.setAttribute('aria-label', `${w.title} のプレビュー動画`);
-    if (w.poster) v.poster = w.poster;
+    if (w.frame) v.poster = w.frame; // 動画の 1 コマ目。カードのポスターは比率が違い、拡大されて映るので使わない
     v.src = w.video!;
     return v;
   };
